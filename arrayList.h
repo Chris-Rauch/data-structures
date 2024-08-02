@@ -1,5 +1,5 @@
 #ifndef ARRAY_LIST
-#define AARAY_LIST
+#define ARRAY_LIST
 
 template <typename T>
 class ArrayList
@@ -23,6 +23,6 @@ private:
     size_t _capacity;
 };
 
-#include "ArrayList.cpp"
+#include "arrayList.cpp"
 
 #endif

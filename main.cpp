@@ -1,6 +1,6 @@
 // for testing dataStruct.h
 #include <iostream>
-#include "LinkedList/linkedList.h"
+#include "linkedList.h"
 
 using namespace std;
 
