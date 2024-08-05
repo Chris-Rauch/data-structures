@@ -1,5 +1,4 @@
-//#include "linkedList.h"
-//#include <iostream>
+#include "linkedList.h"
 
 /// @brief Destructor
 /// @tparam T 
