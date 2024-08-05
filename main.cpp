@@ -15,9 +15,12 @@ int main()
 
 void testLinkedList()
 {
-    LinkedList<int> list;
+cout << "Hello!" << endl;
 
+    LinkedList<int> list;
+/*
     list.push_front(2);
+    
     list.push_front(1);
     list.push_back(4);
     list.push_back(5);
@@ -33,8 +36,8 @@ void testLinkedList()
 
     for (int x = 0; x < list.getSize(); ++x)
     {
-        int value;
-        list.get_index(value, x);
+        int value = list.get_index(x);
         cout << value << endl;
     }
+    */
 }

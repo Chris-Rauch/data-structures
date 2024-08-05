@@ -1,7 +1,8 @@
-#ifndef LINKED_LIST
-#define LINKED_LIST
+#ifndef LINKED_LIST_H
+#define LINKED_LIST_H
 
 #include <iostream>
+//#pragma once
 
 template <typename T>
 class LinkedList
@@ -18,7 +19,7 @@ public:
     ~LinkedList();
     T get_front() const;
     T get_back() const;
-    T get_index(const size_t &index) const;
+    T get_index(const size_t &index);
     T pop_front();
     T pop_back();
     T pop_index(const size_t &index);
@@ -37,6 +38,6 @@ private:
     size_t _size;
 };
 
-#include "linkedList.cpp"
+//#include "linkedList.cpp"
 
 #endif

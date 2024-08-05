@@ -1,25 +1,23 @@
 #ifndef HASH_MAP
 #define HASH_MAP
 
-#include <iostream>
-
-template<class KeyType, class ValueType> 
-class HashMap {
-
+template<typename KeyType, class ValueType> 
+class HashMap 
+{
 public:
     bool insert(const KeyType& key, const ValueType& val);
     bool remove(const KeyType& key);
 
 private:
-    size_t hashFunction(char* key);
-
+    size_t hashFunction(const KeyType &key) const;
 
 private:
-    vector<List<Pair<KeyType, ValueType>>> _hashMap;
-
+    ArrayList<LinkedList<Pair<KeyType, ValueType>>> _hashMap;
 };
 
+#include <iostream>
 #include "hashMap.cpp"
-
+#include "arrayList.h"
+#include "linkedList.h"
 
 #endif

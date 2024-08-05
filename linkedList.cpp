@@ -1,3 +1,6 @@
+//#include "linkedList.h"
+//#include <iostream>
+
 /// @brief Destructor
 /// @tparam T 
 template <typename T>
@@ -11,7 +14,7 @@ LinkedList<T>::~LinkedList()
     }
 }
 
-/// @brief0
+/// @brief
 /// @tparam T 
 /// @return 
 /// @throws std::out_of_range if the list is empty
@@ -33,17 +36,16 @@ T LinkedList<T>::get_back() const
     return _tail->val;
 }
 
-
 /// @brief Gets the value in the list at position 'index'
 /// @tparam T
 /// @param index non-negative integer
 /// @return The value at index
 /// @throws std::out_of_range if the list is empty
 template <typename T>
-T LinkedList<T>::get_index(const size_t &index) const
+T LinkedList<T>::get_index(const size_t &index) //can't be const. TODO
 {
     node* temp = get_node(index);
-    return temp->val
+    return temp->val;
 }
 
 /// @brief Removes and retrieves the first item in the list.
@@ -88,7 +90,7 @@ T LinkedList<T>::pop_back()
     _tail->next = nullptr;
     --_size;
 
-    return T;
+    return value;
 }
 
 /// @brief
@@ -200,7 +202,7 @@ bool LinkedList<T>::push_index(const T &rVal, const size_t &index)
         newNode->next = temp->next;
         temp->next = newNode;
         ++_size;
-        
+
         return true;
     }
 }
