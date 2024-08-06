@@ -4,10 +4,11 @@
  *     Maintains a binary tree. Uses template types
  */
 #ifndef BINARYTREE
- #define BINARYTREE
- #include <iostream>
- 
- 
+#define BINARYTREE
+#include <iostream>
+
+namespace space {
+
 template <class T>
 class binaryTree {
 
@@ -88,6 +89,7 @@ void binaryTree<T>::inOrderDisplay(node *root) const {
     inOrderDisplay(root->leftNode);
     std::cout << root->val << " ";
     inOrderDisplay(root->rightNode);    
+}
 }
 
 #endif
