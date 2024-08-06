@@ -1,7 +1,12 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
-
 #include <iostream>
+
+/* 10,000     insetions -> 66.47ms 
+ * 100,000    insertions -> 13.00s
+ * 1,000,000  insertions -> 175.92s
+ * 10,000,000 insertions ->
+*/
 
 template <typename T>
 class LinkedList

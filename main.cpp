@@ -10,7 +10,7 @@ using namespace std::chrono;
 void testLinkedList();
 void test();
 
-int NUM_LOOPS = 1000000000;
+int NUM_LOOPS = 10000000;
 
 int main()
 {
@@ -38,9 +38,14 @@ void testLinkedList()
     }
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
- 
-    cout << "Time taken by function: "
-         << duration.count() << " microseconds" << endl;
+
+    double time = duration.count();
+
+    if(time < 1000000)
+        cout << "Time taken by function: " << time << " micro-seconds" << endl;
+    else 
+        cout << "Time taken by function: " << time / 1000000 << " seconds" << endl;
+
 
 
 /*
