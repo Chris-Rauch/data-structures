@@ -2,11 +2,13 @@
 #define LINKEDLIST_H
 #include <iostream>
 
-/* 10,000     insetions -> 66.47ms 
+/* 10,000     insertions -> .068893s 
  * 100,000    insertions -> 13.00s
  * 1,000,000  insertions -> 175.92s
  * 10,000,000 insertions ->
 */
+
+namespace MyDataStructures {
 
 template <typename T>
 class LinkedList
@@ -285,5 +287,5 @@ typename LinkedList<T>::node* LinkedList<T>::get_node(const size_t &index)
     // if index is not found then it is out of range
     throw std::out_of_range("Index out of range");
 }
-
+} // namespace MyDataStructures
 #endif // LINKEDLIST_H

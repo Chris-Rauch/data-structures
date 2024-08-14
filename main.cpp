@@ -3,19 +3,42 @@
 #include <cstdlib>
 #include <chrono>
 #include "linkedList.h"
+#include "arrayList.h"
+#include "stringBuilder.h"
 
 using namespace std;
 using namespace std::chrono;
 
 void testLinkedList();
-void test();
+void testArrayList();
+void testStringBuilder();
 
 int NUM_LOOPS = 10000000;
+bool TIME = false;
 
 int main()
 {
+    auto start = high_resolution_clock::now();
+    if(TIME) {
+        start = high_resolution_clock::now();
+    }
+
     testLinkedList();
-    //test();
+    //testArrayList();
+    //testStringBuilder();
+
+    if(TIME)
+    {
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        auto time = duration.count();
+        if(time < 1000000)
+            cout << "Time taken by function: " << time << " micro-seconds" << endl;
+        else 
+            cout << "Time taken by function: " << time / 1000000 << " seconds" << endl;
+    
+    }
+
 
     return 0;
 }
@@ -32,7 +55,6 @@ void testLinkedList()
     LinkedList<int> list;
     list.push_front(0);
 
-    auto start = high_resolution_clock::now();
     for(size_t x = 0; x < NUM_LOOPS; ++x) {
         list.push_index(rand(),rand()%list.getSize());
     }
@@ -63,4 +85,23 @@ void testLinkedList()
     */
 
     
+}
+
+void testStringBuilder() {
+    MyDataStructures::StringBuilder builder;
+    std::string str = "Hello";
+    std::string sentence = "";
+
+/*
+    //  W/OUT STRING BUILDER
+    for(size_t x = 0; x < NUM_LOOPS; ++x) {
+        sentence = sentence + str;
+    }
+*/
+
+    // W/STRING BUILDER
+    for(size_t x = 0; x < NUM_LOOPS; ++x) {
+        builder.append(str);
+    }
+    builder.toString();
 }
