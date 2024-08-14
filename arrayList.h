@@ -15,14 +15,18 @@ template <typename T>
 class ArrayList
 {
 public:
-    ArrayList() : _size(0), _capacity(64) { _arr = new T[_capacity]; };
+    ArrayList() : _size(0), _capacity(64) { _arr = new T[_capacity]; }
     ~ArrayList() { delete[] _arr; };
     void push_front(const T &rVal);
     void push_back(const T &rVal);
     void push_index(const size_t &index, const T &rVal);
-    T pop_front();
-    T pop_back();
-    size_t size() { return _size; };
+    void pop_front();
+    void pop_back() { --_size; }
+    bool contains(const T &rVal) const;
+    size_t size() const { return _size; }
+    size_t capacity() const { return _capacity; }
+
+    T& operator[](std::size_t index) ;
 
 private:
     void resize();
@@ -110,10 +114,15 @@ T ArrayList<T>::pop_front()
 }
 
 template <typename T>
-T ArrayList<T>::pop_back()
-{
-    --_size;
-    return _arr[_size];
+bool ArrayList::contains(const T &rVal) const {
+    for(std::size_t x = 0; x < _size; ++x) 
+    {
+        if(_arr[x] == rVal) 
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 /// @brief 
@@ -141,6 +150,15 @@ void ArrayList<T>::resize()
     delete[] _arr;
     _arr = temp;
     _capacity = newCap;
+}
+
+
+T& ArrayList::operator[](std::size_t index) 
+{
+    if (index >= _size) {
+        throw std::out_of_range("Index out of range");
+    }
+    return _arr[index];
 }
 } // namespace MyDataStructures
 #endif // ARRAY_LIST_H

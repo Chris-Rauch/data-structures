@@ -15,7 +15,7 @@ class LinkedList
 {
     struct node
     {
-        node(T rVal) : val(rVal), next(nullptr){}
+        node(const T &rVal) : val(rVal), next(nullptr){}
         node *next;
         T val;
     };
@@ -23,16 +23,21 @@ class LinkedList
 public:
     LinkedList() : _head(nullptr), _tail(nullptr), _size(0){}
     ~LinkedList();
-    T get_front() const;
-    T get_back() const;
-    T get_index(const size_t &index);
-    T pop_front();
-    T pop_back();
+    T& front() const;
+    T& back() const;
+    T& get_index(const size_t &index) const;
+    void pop_front();
+    void pop_back();
     T pop_index(const size_t &index);
-    bool push_front(const T &rVal);
-    bool push_back(const T &rVal);
+    void push_front(const T &rVal);
+    void push_back(const T &rVal);
     bool push_index(const T &rVal, const size_t &index);
-    size_t getSize() const { return _size; }
+    bool contains(const T &rVal) const;
+    size_t size() const { return _size; }
+    void clear();
+
+    LinkedList& operator=(const LinkedList &rVal);
+    T operator[](std::size_t index);
 
 private:
     void check_empty_list() const;
@@ -62,7 +67,7 @@ LinkedList<T>::~LinkedList()
 /// @return 
 /// @throws std::out_of_range if the list is empty
 template <typename T>
-T LinkedList<T>::get_front() const
+T& LinkedList<T>::front() const
 {
     check_empty_list();
     return _head->val;
@@ -73,7 +78,7 @@ T LinkedList<T>::get_front() const
 /// @return 
 /// @throws std::out_of_range if the list is empty
 template <typename T>
-T LinkedList<T>::get_back() const
+T& LinkedList<T>::back() const
 {
     check_empty_list();
     return _tail->val;
@@ -91,15 +96,15 @@ T LinkedList<T>::get_index(const size_t &index) //can't be const. TODO
     return temp->val;
 }
 
-/// @brief Removes and retrieves the first item in the list.
+/// @brief Removes the first item in the list.
 /// @tparam T
 /// @return The first value in the list.
 /// @throws std::out_of_range if the list is empty
 template <typename T>
-T LinkedList<T>::pop_front()
+void LinkedList<T>::pop_front()
 {
     // retrieve the first item
-    T value = get_front();
+    T value = front();
 
     // remove the item from the list
     node *temp = _head;
@@ -110,8 +115,6 @@ T LinkedList<T>::pop_front()
     {
         _tail = nullptr;
     }
-
-    return value;
 }
 
 /// @brief Removes and retrieves the last item in the list
@@ -119,10 +122,10 @@ T LinkedList<T>::pop_front()
 /// @return The last value in the list
 /// @throws std::out_of_range if the list is empty
 template <typename T>
-T LinkedList<T>::pop_back()
+void LinkedList<T>::pop_back()
 {
     // retrieve the last item
-    T value = get_back();
+    T value = back();
 
     // retrieve the second to last item
     node* temp = get_node(_size-2);
@@ -132,8 +135,6 @@ T LinkedList<T>::pop_back()
     delete _tail->next;
     _tail->next = nullptr;
     --_size;
-
-    return value;
 }
 
 /// @brief
@@ -171,14 +172,10 @@ T LinkedList<T>::pop_index(const size_t &index)
 /// @param rVal
 /// @return
 template <typename T>
-bool LinkedList<T>::push_front(const T &rVal)
+void LinkedList<T>::push_front(const T &rVal)
 {
     // create the new node
-    node* newNode = new(std::nothrow) node(rVal);
-    if (newNode == nullptr) 
-    {
-        return false; // Memory allocation failed
-    }
+    node* newNode = new node(rVal);
 
     // update the head
     node* temp = _head;
@@ -191,18 +188,13 @@ bool LinkedList<T>::push_front(const T &rVal)
     {
         _tail = _head;
     }
-    return true;
 }
 
 template <typename T>
-bool LinkedList<T>::push_back(const T &rVal)
+void LinkedList<T>::push_back(const T &rVal)
 {
     // create the new node
-    node* newNode = new(std::nothrow) node(rVal);
-    if (newNode == nullptr) 
-    {
-        return false; // Memory allocation failed
-    }
+    node* newNode = new node(rVal);
 
     // handle empty list
     if (_size == 0)
@@ -215,7 +207,6 @@ bool LinkedList<T>::push_back(const T &rVal)
         _tail = newNode;
     }
     ++_size;
-    return true;
 }
 
 template <typename T>
@@ -249,6 +240,61 @@ bool LinkedList<T>::push_index(const T &rVal, const size_t &index)
 
         return true;
     }
+}
+
+template <typename T>
+bool LinkedList<T>::contains(const T &rVal) const 
+{
+    node *temp = _head;
+
+    while(temp != std::nullptr)
+    {
+        if(temp->val == rVal) 
+        {
+            return true;
+        }
+        temp = temp->next;
+    }
+    return false;
+}
+
+void LinkedList::clear()
+{
+    node *temp = _head;
+    while(temp != std::nullptr)
+    {
+        node *holder = temp;
+        temp = temp->next;
+        delete holder;
+    }
+    _head = std::nullptr;
+    _tail = std::nullptr;
+    _size = 0;
+}
+
+template <typename T>
+LinkedList& LinkedList::operator=(const LinkedList &rVal) 
+{
+    // check for self assignment
+    if(this == &rVal)
+    {
+        return *this;
+    }
+
+    // clear the list
+    this.clear();
+
+    // copy values over
+    for(std::size_t x = 0; x < other.size(); ++x)
+    {
+        this.push_back(other.get_index(x));
+    }
+}
+
+template <typename T>
+T& LinkedList::operator[](std::size_t index)
+{
+    return &(get_index(index));
 }
 
 /// @brief Implemented to guard against empty list in pop/get functions
