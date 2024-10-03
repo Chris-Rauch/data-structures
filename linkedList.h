@@ -8,7 +8,7 @@
  * 10,000,000 insertions ->
 */
 
-namespace MyDataStructures {
+namespace CustomStructs {
 
 template <typename T>
 class LinkedList
@@ -23,25 +23,25 @@ class LinkedList
 public:
     LinkedList() : _head(nullptr), _tail(nullptr), _size(0){}
     ~LinkedList();
-    T& front() const;
-    T& back() const;
-    T& get_index(const size_t &index) const;
+    T& front();
+    T& back();
+    T& get_index(const size_t &index);
     void pop_front();
     void pop_back();
-    T pop_index(const size_t &index);
-    void push_front(const T &rVal);
-    void push_back(const T &rVal);
+    void pop_index(const size_t &index);
+    bool push_front(const T &rVal);
+    bool push_back(const T &rVal);
     bool push_index(const T &rVal, const size_t &index);
     bool contains(const T &rVal) const;
     size_t size() const { return _size; }
     void clear();
 
     LinkedList& operator=(const LinkedList &rVal);
-    T operator[](std::size_t index);
+    const T& operator[](const size_t &index) const;
 
 private:
-    void check_empty_list() const;
-    node* get_node(const size_t &index);
+    bool is_empty() const {return _head == nullptr;}
+    node* get_node(const size_t &index) const;
 
 private:
     node *_head;
@@ -50,7 +50,6 @@ private:
 };
 
 /// @brief Destructor
-/// @tparam T 
 template <typename T>
 LinkedList<T>::~LinkedList()
 {
@@ -62,42 +61,34 @@ LinkedList<T>::~LinkedList()
     }
 }
 
-/// @brief
-/// @tparam T 
-/// @return 
-/// @throws std::out_of_range if the list is empty
+/// @brief Retrieves the value of the first element in the list.
+/// @return A reference to the value of the first element.
+/// @throws std::out_of_range if the list is empty.
 template <typename T>
-T& LinkedList<T>::front() const
+T& LinkedList<T>::front()
 {
-    check_empty_list();
+    if(is_empty())
+    {
+        throw std::out_of_range("List is empty");
+    }
+
     return _head->val;
 }
 
-/// @brief 
-/// @tparam T 
-/// @return 
-/// @throws std::out_of_range if the list is empty
+/// @brief Retrieves the value of the last element in the list.
+/// @return A reference to the value of the last element.
+/// @throws std::out_of_range if the list is empty.
 template <typename T>
-T& LinkedList<T>::back() const
+T& LinkedList<T>::back()
 {
-    check_empty_list();
+    if(is_empty())
+    {
+        throw std::out_of_range("List is empty");
+    }
     return _tail->val;
 }
 
-/// @brief Gets the value in the list at position 'index'
-/// @tparam T
-/// @param index non-negative integer
-/// @return The value at index
-/// @throws std::out_of_range if the list is empty
-template <typename T>
-T LinkedList<T>::get_index(const size_t &index) //can't be const. TODO
-{
-    node* temp = get_node(index);
-    return temp->val;
-}
-
 /// @brief Removes the first item in the list.
-/// @tparam T
 /// @return The first value in the list.
 /// @throws std::out_of_range if the list is empty
 template <typename T>
@@ -117,8 +108,7 @@ void LinkedList<T>::pop_front()
     }
 }
 
-/// @brief Removes and retrieves the last item in the list
-/// @tparam T
+/// @brief Removes the last item in the list
 /// @return The last value in the list
 /// @throws std::out_of_range if the list is empty
 template <typename T>
@@ -142,15 +132,15 @@ void LinkedList<T>::pop_back()
 /// @param index
 /// @return
 template <typename T>
-T LinkedList<T>::pop_index(const size_t &index)
+void LinkedList<T>::pop_index(const size_t &index)
 {
     if (index == 0)
     {
-        return pop_front();
+        pop_front();
     }
     else if (index == (_size-1))
     {
-        return pop_back();
+        pop_back();
     }
     else
     {
@@ -172,10 +162,18 @@ T LinkedList<T>::pop_index(const size_t &index)
 /// @param rVal
 /// @return
 template <typename T>
-void LinkedList<T>::push_front(const T &rVal)
+bool LinkedList<T>::push_front(const T &rVal)
 {
     // create the new node
-    node* newNode = new node(rVal);
+    node* newNode = nullptr;
+    try 
+    {
+        newNode = new node(rVal);
+    } 
+    catch(std::bad_alloc) 
+    {
+        return false;
+    }
 
     // update the head
     node* temp = _head;
@@ -188,13 +186,26 @@ void LinkedList<T>::push_front(const T &rVal)
     {
         _tail = _head;
     }
+    return true;
 }
 
+/// @brief Adds an element to the end of the LinkedList.
+/// @param rVal The value to be inserted at the end of the LinkedList.
+/// @return True if the insertion was successful, false if memory allocation 
+///   failed.
 template <typename T>
-void LinkedList<T>::push_back(const T &rVal)
+bool LinkedList<T>::push_back(const T &rVal)
 {
     // create the new node
-    node* newNode = new node(rVal);
+    node* newNode = nullptr;
+    try 
+    {
+        newNode = new node(rVal);
+    }
+    catch(std::bad_alloc) 
+    {
+        return false;
+    }
 
     // handle empty list
     if (_size == 0)
@@ -207,8 +218,16 @@ void LinkedList<T>::push_back(const T &rVal)
         _tail = newNode;
     }
     ++_size;
+    return true;
 }
 
+/// @brief Inserts an element at a specified index in the LinkedList, shifting
+///   subsequent elements to the right.
+/// @param rVal The value to be inserted at the specified index.
+/// @param index The position at which to insert the new element. Must be
+///   between 0 and the current size of the list.
+/// @return True if the insertion was successful, false if memory allocation
+///   failed or the index is out of range.
 template <typename T>
 bool LinkedList<T>::push_index(const T &rVal, const size_t &index)
 {
@@ -222,12 +241,15 @@ bool LinkedList<T>::push_index(const T &rVal, const size_t &index)
     }
     else
     {
-        // create the new node
-        // don't throw error on bad mem alloc
-        node* newNode = new(std::nothrow) node(rVal);
-        if (newNode == nullptr) 
+        // create the new node & return false on bad memory allocation
+        node* newNode = nullptr;
+        try
         {
-            return false; // Memory allocation failed
+            newNode = new node(rVal);
+        }
+        catch(const std::bad_alloc& e)
+        {
+            return false;
         }
 
         // find the node to the left of the insertion
@@ -242,12 +264,15 @@ bool LinkedList<T>::push_index(const T &rVal, const size_t &index)
     }
 }
 
+/// @brief Checks if the list contains a specific value.
+/// @param rVal The value to search for in the list.
+/// @return True if the value is found, otherwise false.
 template <typename T>
 bool LinkedList<T>::contains(const T &rVal) const 
 {
-    node *temp = _head;
+    const node *temp = _head;
 
-    while(temp != std::nullptr)
+    while(temp != nullptr)
     {
         if(temp->val == rVal) 
         {
@@ -258,22 +283,25 @@ bool LinkedList<T>::contains(const T &rVal) const
     return false;
 }
 
-void LinkedList::clear()
+/// @brief Clears the entire list, deleting all nodes.
+template <typename T>
+void LinkedList<T>::clear()
 {
-    node *temp = _head;
-    while(temp != std::nullptr)
+    while(_head != nullptr)
     {
-        node *holder = temp;
-        temp = temp->next;
-        delete holder;
+        node *temp = _head;
+        _head = _head->next;
+        delete temp;
     }
-    _head = std::nullptr;
-    _tail = std::nullptr;
+    _tail = nullptr;
     _size = 0;
 }
 
+/// @brief Assignment operator for copying another LinkedList.
+/// @param rVal The LinkedList to copy from.
+/// @return A reference to this LinkedList.
 template <typename T>
-LinkedList& LinkedList::operator=(const LinkedList &rVal) 
+LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T> &rVal) 
 {
     // check for self assignment
     if(this == &rVal)
@@ -282,56 +310,72 @@ LinkedList& LinkedList::operator=(const LinkedList &rVal)
     }
 
     // clear the list
-    this.clear();
+    this->clear();
 
     // copy values over
-    for(std::size_t x = 0; x < other.size(); ++x)
+    for(std::size_t x = 0; x < rVal.size(); ++x)
     {
-        this.push_back(other.get_index(x));
+        this->push_back(rVal.get_index(x));
     }
 }
 
+/// @brief Retrieves the value at a specified position in the list.
+/// @param index The position in the list where the value is to be retrieved.
+///   Must be within the bounds of the list.
+/// @return The value at the specified position.
+/// @throws std::out_of_range if index is out of bounds
 template <typename T>
-T& LinkedList::operator[](std::size_t index)
+T& LinkedList<T>::get_index(const size_t &index) //can't be const. TODO
 {
-    return &(get_index(index));
-}
-
-/// @brief Implemented to guard against empty list in pop/get functions
-template <typename T>
-void LinkedList<T>::check_empty_list() const
-{
-    if(_head == nullptr) 
+    node* temp = get_node(index);
+    
+    // check for out of bounds
+    if(temp == nullptr)
     {
-        throw std::out_of_range("List is empty");
+        throw std::out_of_range("Index out of range");
     }
+
+    return temp->val;
 }
 
-/// @brief Find the node in the list and returns the pointer. Also protects 
-/// against out of bound index parameter. Might cause push functions to stop
-/// prematurely if implemented incorrectly
-/// @tparam T 
-/// @param index integer is expected to be within bounds 
-/// @return 
-/// @throws std::out_of_range if the list is empty 
+/// @brief Finds and returns the node at a specified index in the list.
+/// @param index The position of the node to be retrieved. Must be within the 
+///   bounds of the list.
+/// @return A pointer to the node at the specified index. nullptr if not found
 template <typename T>
-typename LinkedList<T>::node* LinkedList<T>::get_node(const size_t &index)
+typename LinkedList<T>::node* LinkedList<T>::get_node(const size_t &index) const
 {
-    check_empty_list();
-    node *temp = _head;
+    node* temp = _head;
+
+    if(is_empty()) 
+    {
+        return nullptr;
+    }
 
     // traverse list
     for (size_t x = 0; temp != nullptr; ++x)
     {
         if(x == index) 
         {
-            return temp;
+            return temp; // return if found
         }
         temp = temp->next;
     }
 
-    // if index is not found then it is out of range
-    throw std::out_of_range("Index out of range");
+    return nullptr;
 }
+
+/// @brief Accesses the element at the specified index in the linked list.
+///   This operator provides read-only access to the element.
+/// @tparam T The type of the elements stored in the linked list.
+/// @param index The index of the element to access, starting from 0.
+/// @return A constant reference to the element at the specified index.
+template<typename T>
+const T& LinkedList<T>::operator[](const size_t &index) const {
+    node* elem = get_node(index);
+    return elem->val;
+}
+
 } // namespace MyDataStructures
+
 #endif // LINKEDLIST_H

@@ -9,13 +9,14 @@
 
 #include <iostream>
 
-namespace MyDataStructures {
+namespace CustomStructs {
 
 template <typename T>
 class ArrayList
 {
 public:
     ArrayList() : _size(0), _capacity(64) { _arr = new T[_capacity]; }
+    ArrayList(const int& capacity) : _size(0), _capacity(capacity) { _arr = new T[_capacity]; }
     ~ArrayList() { delete[] _arr; };
     void push_front(const T &rVal);
     void push_back(const T &rVal);
@@ -68,12 +69,12 @@ void ArrayList<T>::push_back(const T &rVal)
 }
 
 /// @brief Inserts an element at a specified index in the ArrayList, shifting
-///        subsequent elements to the right.
+///   subsequent elements to the right.
 /// @param index The position at which to insert the new element. Must be 
-///        within the current size of the ArrayList.
+///   within the current size of the ArrayList.
 /// @param rVal The value to be inserted at the specified index.
 /// @throws std::out_of_range if the index is greater than the current size of 
-///         the ArrayList.
+///   the ArrayList.
 template <typename T>
 void ArrayList<T>::push_index(const size_t &index, const T &rVal) 
 {
@@ -97,11 +98,11 @@ void ArrayList<T>::push_index(const size_t &index, const T &rVal)
 }
 
 /// @brief Removes and returns the first element of the ArrayList, shifting 
-///        subsequent elements to the left.
+///   subsequent elements to the left.
 /// @return The first element of the ArrayList before removal.
 /// @throws std::out_of_range if the ArrayList is empty.
 template <typename T>
-T ArrayList<T>::pop_front()
+void ArrayList<T>::pop_front()
 {
     T value = _arr[0];
 
@@ -114,7 +115,7 @@ T ArrayList<T>::pop_front()
 }
 
 template <typename T>
-bool ArrayList::contains(const T &rVal) const {
+bool ArrayList<T>::contains(const T &rVal) const {
     for(std::size_t x = 0; x < _size; ++x) 
     {
         if(_arr[x] == rVal) 
@@ -131,7 +132,7 @@ template <typename T>
 void ArrayList<T>::resize() 
 {
     T* temp;
-    size_t newCap = _capacity * 2
+    size_t newCap = _capacity * 2;
 
     try 
     {
@@ -152,10 +153,24 @@ void ArrayList<T>::resize()
     _capacity = newCap;
 }
 
-
-T& ArrayList::operator[](std::size_t index) 
+/// @brief Accesses the element at the specified index.
+/// @param index The index of the element to access. Must be within the current
+///   size of the ArrayList.
+/// @return A reference to the element at the specified index.
+/// @throws std::out_of_range if the index is out of the valid range 
+template <typename T>
+T& ArrayList<T>::operator[](std::size_t index) 
 {
+    /* 
+    // normal implementation
     if (index >= _size) {
+        throw std::out_of_range("Index out of range");
+    }
+    */
+
+    // hash map implementation
+    if(index >= _capacity) 
+    {
         throw std::out_of_range("Index out of range");
     }
     return _arr[index];
